@@ -1,0 +1,3 @@
+# Document feature status (30 March 2026 brief)
+Implemented locally: customers, leads (existing CRM), products, invoices with example CGST/SGST/IGST calculation and HSN/SAC, payments and balances, expenses, manual diary entries, settings, reports, CSV GST export, WhatsApp/email drafts, basic JSON assistant, browser speech input/output where supported, mobile layout.
+Pending: Google Sheets, Supabase, Google OAuth, Gemini diary image OCR, server PDF, real messaging, multi-user roles and permissions. These cannot be represented as secure in a browser-only local store. GST numbers are illustrative and not a statutory-compliance claim.

@@ -1,0 +1,14 @@
+create extension if not exists pgcrypto;
+create table public.organizations (id uuid primary key default gen_random_uuid(), name text not null check (length(trim(name)) > 0), created_at timestamptz not null default now());
+create table public.organization_members (organization_id uuid not null references public.organizations(id) on delete cascade, user_id uuid not null references auth.users(id) on delete cascade, role text not null check (role in ('owner','admin','manager','staff')), created_at timestamptz not null default now(), primary key (organization_id,user_id));
+create table public.leads (id uuid primary key default gen_random_uuid(), organization_id uuid not null references public.organizations(id) on delete cascade, name text not null check (length(trim(name)) > 0), email text, phone text, source text, stage text not null default 'new', created_at timestamptz not null default now(), updated_at timestamptz not null default now());
+create index leads_org_created_idx on public.leads (organization_id,created_at desc);
+create index members_user_idx on public.organization_members (user_id,organization_id);
+alter table public.organizations enable row level security;
+alter table public.organization_members enable row level security;
+alter table public.leads enable row level security;
+create policy organizations_read on public.organizations for select to authenticated using (exists (select 1 from public.organization_members m where m.organization_id=id and m.user_id=(select auth.uid())));
+create policy members_read on public.organization_members for select to authenticated using (user_id=(select auth.uid()));
+create policy leads_read on public.leads for select to authenticated using (exists (select 1 from public.organization_members m where m.organization_id=leads.organization_id and m.user_id=(select auth.uid())));
+create policy leads_insert on public.leads for insert to authenticated with check (exists (select 1 from public.organization_members m where m.organization_id=leads.organization_id and m.user_id=(select auth.uid())));
+create policy leads_update on public.leads for update to authenticated using (exists (select 1 from public.organization_members m where m.organization_id=leads.organization_id and m.user_id=(select auth.uid()))) with check (exists (select 1 from public.organization_members m where m.organization_id=leads.organization_id and m.user_id=(select auth.uid())));

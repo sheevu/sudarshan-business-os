@@ -1,0 +1,2 @@
+# Test results
+2026-11-07: `pnpm lint` and `pnpm build` passed after dashboard/logo/login changes. In-app browser showed populated dashboard with 12 marked demo leads, four KPI cards, performance section, chart labels, and text insights. Login page and logo rendered. Google button showed the expected missing-OAuth-configuration message. Playwright Chrome launch failed with EACCES; in-app browser was used instead. Mobile viewport interaction test remains pending.
